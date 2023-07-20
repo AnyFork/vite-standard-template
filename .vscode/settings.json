@@ -3,6 +3,7 @@
     "eslint.enable": true,
     // code代码保存时，自动eslint修复
     "editor.codeActionsOnSave": {
-        "source.fixAll.eslint": true
+        "source.fixAll.eslint": true,
+        "eslint.autoFixOnSave" : true
     }
 }
