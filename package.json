@@ -1,0 +1,25 @@
+{
+  "name": "vite-standard-template",
+  "description": "一个基于Vite4.X+Vue3.X+TypeScript+Naive UI+Unocss+Eslint+Prettier+husky+lint-staged+commitlint+commitizen+cz-customizable+conventional-changelog构建的标准的vue项目模板",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "author": {
+    "name": "小紫念沁",
+    "email": "874957743@qq.com"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.3",
+    "typescript": "^5.1.6",
+    "vite": "^4.4.4",
+    "vue-tsc": "^1.8.5"
+  }
+}
