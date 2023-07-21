@@ -11,7 +11,7 @@
 
 ## 一 项目简介
 
-对于多人协作开发来说，项目开发规范标准，非常重要，不仅能够统一标准，规范代码书写风格，还能便于后期维护了运营。
+对于多人协作开发来说，项目开发规范标准，非常重要，不仅能够统一标准，规范代码书写风格，还能便于后期维护和运营。
 
 一直以来，每次采用`vite`搭建`Vue3`项目时，都苦于配置`Eslint`代码校验规范，网上的水贴层出不穷，你抄我的，我粘贴你的，没有几个是有用的，不仅容易误导他人，还浪费大量的时间排查问题。最近花了一些时间，查阅了很多资料，自己也通过反复验证，决定自己搭建一个简单的模板，集成好日常代码开发规范和提交规范，把常用
 的`Vite`插件都配置好，在以后创建项目时直接使用，避免重复造轮子，同时也供他人参考。
@@ -19,7 +19,7 @@
 这是一个基于Vite4.X + Vue3.X + TypeScript + Pinia + Naive UI + Unocss + Eslint + Prettier + husky + lint-staged + commitlint + commitizen+ cz-customizable + conventional-changelog 构建的标准的Vue3项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含
 组件自动导入，API
 
-## 二项目插件
+## 二 项目Vite插件
 
 ## 三 项目创建
 
@@ -827,4 +827,8 @@ pnpm dev
 
 ## 六 参考文档
 
-<https://blog.csdn.net/Jackson_Wen/article/details/127921063> <https://zhuanlan.zhihu.com/p/270662897> <https://codeleading.com/article/66646301239/>
+<https://blog.csdn.net/Jackson_Wen/article/details/127921063> 
+
+<https://zhuanlan.zhihu.com/p/270662897> 
+
+<https://codeleading.com/article/66646301239/>
