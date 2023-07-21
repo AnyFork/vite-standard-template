@@ -9,6 +9,7 @@ module.exports = {
     singleQuote: true,
     //避免报错delete (cr)的错
     endOfLine: 'auto',
+    // 换行,always：超过printWidth就换行，never：不换行，preserve：按照原样处理
     proseWrap: 'always',
     // 不加分号
     semi: false,

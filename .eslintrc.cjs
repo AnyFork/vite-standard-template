@@ -27,6 +27,9 @@ module.exports = {
   plugins: ['vue'],
   rules: {
     // 关闭下面/// <reference path="..." />, /// <reference types="..." />,  /// <reference lib="..." /> 校验
-    '@typescript-eslint/triple-slash-reference': 'off'
+    '@typescript-eslint/triple-slash-reference': 'off',
+    // 关闭Eslint 缩进校验规则
+    indent: 'off',
+    '@typescript-eslint/indent': 'error'
   }
 }

@@ -4,6 +4,36 @@
     // code代码保存时，自动eslint修复
     "editor.codeActionsOnSave": {
         "source.fixAll.eslint": true,
-        "eslint.autoFixOnSave" : true
-    }
+        "eslint.autoFixOnSave": true
+    },
+    //prettier可以格式化很多种格式，所以需要在这里对应配置下
+    "[html]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[css]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[less]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[vue]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[jsonc]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[typescript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    //这个设置在ctrl+s的时候，会启用默认的格式化，这里是prettier
+    "editor.formatOnSave": true
 }

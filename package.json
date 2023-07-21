@@ -18,7 +18,8 @@
         "commit-msg": "npx husky add .husky/commit-msg \"npx --no-install commitlint --edit '$1'\"",
         "pre-commit": "npx husky add .husky/pre-commit 'npx lint-staged'",
         "commit": "git add . && git-cz",
-        "changelog": "conventional-changelog -p cz-config.js -i CHANGELOG.md -s -r 0"
+        "changelog": "conventional-changelog -p cz-config.cjs -i CHANGELOG.md -s -r 0",
+        "format": "prettier --write ./**/*.{html,vue,ts,js,json,md,css}"
     },
     "config": {
         "commitizen": {
