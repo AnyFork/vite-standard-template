@@ -31,6 +31,9 @@ module.exports = {
         // 关闭Eslint 缩进校验规则
         indent: 'off',
         // 关闭@typescript-eslint/indent缩进报错
-        '@typescript-eslint/indent': 'off'
+        '@typescript-eslint/indent': 'off',
+        // 关闭方法之前的空格校验
+        'space-before-function-paren': 'off',
+        '@typescript-eslint/space-before-function-paren': 'off'
     }
 }

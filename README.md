@@ -16,12 +16,9 @@
 一直以来，每次采用`vite`搭建`Vue3`项目时，都苦于配置`Eslint`代码校验规范，网上的水贴层出不穷，你抄我的，我粘贴你的，没有几个是有用的，不仅容易误导他人，还浪费大量的时间排查问题。最近花了一些时间，查阅了很多资料，自己也通过反复验证，决定自己搭建一个简单的模板，集成好日常代码开发规范和提交规范，把常用
 的`Vite`插件都配置好，在以后创建项目时直接使用，避免重复造轮子，同时也供他人参考。
 
-这是一个基于Vite4.X + Vue3.X + TypeScript + Pinia + Naive UI + Unocss + Eslint + Prettier + husky + lint-staged + commitlint + commitizen+ cz-customizable + conventional-changelog 构建的标准的Vue3项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含
-组件自动导入，API
+这是一个基于Vite4.X + Vue3.X + TypeScript + Pinia + Naive UI + Unocss + Eslint + Prettier + husky + lint-staged + commitlint + commitizen+ cz-customizable + conventional-changelog 构建的标准的Vue3项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含组件自动导入API
 
-## 二 项目Vite插件
-
-## 三 项目创建
+## 二 项目创建
 
 1 采用`pnpm`创建项目
 
@@ -41,11 +38,497 @@ pnpm install
 pnpm dev
 ```
 
-## 四 项目配置
+## 三 核心依赖
+
+### 1 Vite插件
+#### 1 unplugin-auto-import
+> unplugin-auto-import官网：https://github.com/antfu/unplugin-auto-import
+
+`unplugin-auto-import`是为 `Vite、Webpack、Rollup` 和 `esbuild` 按需自动导入`API`。例如：`ref,reactive`等API无需额外导入，就可以全局使用。
+##### 1.1 依赖安装
+```js
+pnpm install unplugin-auto-import -D
+```
+
+##### 1.2 插件配置
+在`vite.config.ts`中进行插件配置，如下：
+```ts
+export default defineConfig(){
+    plugins:[
+      ...
+       //自动导入Composition API,https://github.com/antfu/unplugin-auto-import
+      AutoImport({
+        dts: "src/types/auto-import.d.ts",
+        dirs: ['src/store/modules'],
+        imports: [
+          "vue",
+          "vue-router",
+          "pinia",
+          "@vueuse/core",
+          {
+            "naive-ui": ["useDialog", "useMessage", "useNotification", "useLoadingBar"],
+          },
+        ],
+      }),
+      ...
+    ]
+}
+```
+上面已经配置了`vue,vue-router,pinia,@vueuse/core,naive-ui`等相关框架自动导入API
+
+#### 2 unplugin-vue-components
+>unplugin-vue-components 官网：https://github.com/antfu/unplugin-vue-components
+
+`unplugin-vue-components`是一款组件自动导入`Vite`插件，可以自定义需要自动导入的组件目录，无需使用时手动导入。
+
+##### 2.1 依赖安装
+```js
+pnpm install unplugin-vue-components -D
+```
+##### 2.2 插件配置
+在`vite.config.ts`中进行插件配置，如下：
+```ts
+export default defineConfig(){
+    plugins:[
+      ...
+        //自动导入组件，https://github.com/antfu/unplugin-vue-components
+        Components({
+        dts: "src/types/components.d.ts",
+        dirs: ['src/components'],
+        resolvers: [
+            NaiveUiResolver()
+            })],
+        }),
+      ...
+    ]
+}
+```
+
+#### 3 unplugin-vue-setup-extend-plus
+> unplugin-vue-setup-extend-plus 官网：https://github.com/chenxch/unplugin-vue-setup-extend-plus
+
+`Vue3`组件自定义命名插件，可以在`<script setup lang=ts name="Good"></script>`标签中，通过设置name属性为组件命名
+
+##### 3.1 依赖安装
+```js
+pnpm install unplugin-vue-setup-extend-plus -D
+```
+##### 3.2 插件配置
+在`vite.config.ts`中进行插件配置，如下：
+```ts
+export default defineConfig(){
+    plugins:[
+      ...
+      //官网：https://github.com/chenxch/unplugin-vue-setup-extend-plus
+      vueSetupExtend({
+        //禁止组件属性自动导出
+        enableAutoExpose: false,
+      }),
+      ...
+    ]
+}
+```
+#### 4 vite-plugin-html
+> vite-plugin-html 官网地址：https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
+
+`vite-plugin-html`插件可以在`html`页面中使用`ejs`语法，动态注入数据。
+
+##### 4.1 依赖安装
+```js
+pnpm install vite-plugin-html -D
+```
+##### 4.2 插件配置
+1 在`vite.config.ts`中进行插件配置，如下：
+```ts
+export default defineConfig(){
+    plugins:[
+      ...
+      //在html中创建ejs标签，官网地址：https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
+      createHtmlPlugin({
+        // 是否压缩 html
+        minify: true,
+        /**
+         * 需要注入 index.html ejs 模版的数据
+         */
+        inject: {
+          data: {
+            title: env.VITE_SYSTEM_TITLE,
+            loading: env.VITE_SYSTEM_LOADING,
+            description: env.VITE_SYSTEM_DESC
+          }
+        }
+      }),
+      ...
+    ]
+}
+```
+`inject`中的data就是要注入的变量参数，`env`为环境变量参数。可以通过一下代码获取到：
+```js
+ const env = loadEnv(mode, process.cwd())
+const { VITE_ICON_PREFFIX, VITE_ICON_LOCAL_PREFFIX } = env
+```
+2 修改`index.html`文件，将`vite-plugin-html`插件注入的数据，通过`ejs`语法写入`index.html`,如下:
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="<%=description%>" />
+  <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+  <link rel="stylesheet" href="/resource/loading.css" />
+  <title>
+    <%= title %>
+  </title>
+</head>
+
+<body>
+  <div id="app">
+    <div class="loading-container">
+      <div id="loadingLogo" class="loading-svg"></div>
+      <div class="loading-spin__container">
+        <div class="loading-spin">
+          <div class="left-0 top-0 loading-spin-item"></div>
+          <div class="left-0 bottom-0 loading-spin-item loading-delay-500"></div>
+          <div class="right-0 top-0 loading-spin-item loading-delay-1000"></div>
+          <div class="right-0 bottom-0 loading-spin-item loading-delay-1500"></div>
+        </div>
+      </div>
+      <div class="loading-title">
+        <%= loading %>
+      </div>
+    </div>
+    <script src="/resource/loading.js"></script>
+  </div>
+  <script type="module" src="/src/main.ts"></script>
+</body>
+
+</html>
+```
+#### 5 unplugin-icons
+> unplugin-icons 官网地址：https://www.npmjs.com/package/unplugin-icons
+
+`unplugin-icons`是一款功能非常强大的图标插件，插件核心是用来做`svg Icon` 按需解析并加载的，同时它基于 `iconify`图标库支持按需访问上万种图标。支持在线按需访问加载，也能自定义本地`svg`。唯一的确定就是无法通过`icon`名称动态加载图标。
+
+##### 5.1 依赖安装
+```js
+pnpm install unplugin-icons -D
+```
+##### 5.2 插件配置
+在`vite.config.ts`中进行插件配置，如下：
+```ts
+export default defineConfig(){
+    plugins:[
+      ...
+      //自动导入组件，https://github.com/antfu/unplugin-vue-components
+      Components({
+        dts: "src/types/components.d.ts",
+        dirs: ['src/components'],
+        resolvers: [
+          //icon自动导入，icon组件格式：{prefix}-{collection}-{icon}
+          IconsResolver({
+            //定义图标前缀
+            prefix: VITE_ICON_PREFFIX,
+            //定义自定义图片集合名称
+            customCollections: [VITE_ICON_LOCAL_PREFFIX]
+          })],
+      }),
+      //官网地址：https://www.npmjs.com/package/unplugin-icons
+      Icons({
+        //自动从iconify下载icon
+        autoInstall: true,
+        compiler: 'vue3',
+        //自定义本地svg集合
+        customCollections: {
+          [VITE_ICON_LOCAL_PREFFIX]: FileSystemIconLoader('src/assets/svg', svg =>
+            svg.replace(/^<svg\s/, '<svg width="1.2em" height="1.2em" ')
+          )
+        },
+        scale: 1.2,
+        defaultClass: 'inline-block'
+      }),
+      ...
+    ]
+}
+```
+在`unplugin-vue-components`配置`IconsResolver`解析器可以实现自定义图标组件自动导入，icon组件格式：{prefix}-{collection}-{icon}，VITE_ICON_PREFFIX为组件前缀环境变量，VITE_ICON_LOCAL_PREFFIX为自定义Svg组件集合名称，也是通过环境变量配置。
+
+`customCollections`允许我们自定义本地`SVG`文件加载规则,`FileSystemIconLoader`配置本地`svg`目录，插件默认`svg`目录为`@/assets/svg/`。
+
+当我们配置好上面的设置后，我们可以在`vue`页面模板中直接使用`<Icon-local-user/>`图标组件。`Icon`为环境变量`VITE_ICON_PREFFIX`设置的值，项目中设置`VITE_ICON_PREFFIX=Icon`,不设置，插件默认为`icon`,`local`为环境变量`VITE_ICON_LOCAL_PREFFIX`的值，项目中设置`VITE_ICON_LOCAL_PREFFIX=local`,不设置，需要在`customCollections`中自定义，`user`为`iconify`网站中查询到的`svg`图标名称。下面是个例子
+```vue
+<template>
+ <div>
+    <!--加载本地assets/svg目录下面名字为no-permission的svg图标-->
+    <Icon-local-no-permission/>
+    <!--加载iconify网站上名称为mdi-account图标 -->
+    <Icon-mdi-account />
+ </div>
+</template>
+```
+#### 6 vite-plugin-svg-icons
+> vite-plugin-svg-icons 官网:https://github.com/vbenjs/vite-plugin-svg-icons
+
+`unplugin-icons`插件功能虽然很强大，不仅能按需在线加载`iconify`网站上的`svg`图标，也能加载自定义本地目录`svg`图标，但唯一的不足就是无法通过图标名称动态渲染本地图标，所有便引入了`vite-plugin-svg-icons`插件，此插件允许使用图标名称动态渲染图标组件，但无法动态按需加载其他线上图标资源，所以这2个插件相互配置，可以完美的实现svg的动态和静态渲染加载。
+
+##### 6.1 依赖安装
+```js
+pnpm install vite-plugin-svg-icons -D
+```
+##### 6.2 插件配置
+1 在`vite.config.ts`中进行插件配置，如下：
+```ts
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import path from 'path'
+export default defineConfig(){
+    plugins:[
+      ...
+      createSvgIconsPlugin({
+       //// 指定需要缓存的svg图标文件夹
+       iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
+       // 指定symbolId格式
+       symbolId: 'Icon-local-[dir]-[name]`,
+       inject: 'body-last',
+       customDomId: '__SVG_ICON_LOCAL__'
+      })
+      ...
+    ]
+}
+```
+2 在`main.js`中增加以下代码
+```js
+import 'virtual:svg-icons-register'
+```
+3 将需要的`svg`图标放入与`iconDirs`设置的路径中，项目中为`src/assets/svg`
+```svg
+<svg aria-hidden="true" style="width: 14px; height: 14px">
+	<use :href="`#icon-local-${menu.icon}`" />
+</svg>
+```
+`menu.icon`是路径里面的`svg`图片名称。这个是简单用法，项目中已封装成了组件`SvgIcon`,请前往自行查看。
+
+
+#### 7 rollup-plugin-visualizer
+> rollup-plugin-visualizer 官网：https://github.com/btd/rollup-plugin-visualizer
+
+`rollup-plugin-visualizer`是一个用于Rollup构建工具的插件，一款用于项目性能优化，打包体积分析，能够生成可视化的构建报告，帮助开发者更好地了解构建过程中的文件大小、依赖关系等信息的插件。
+
+##### 7.1 依赖安装
+```js
+pnpm install rollup-plugin-visualizer -D
+```
+
+##### 7.2 插件配置
+
+1 在`vite.config.ts`中进行插件配置，如下：
+```ts
+// 引入rollup-plugin-visualizer模块
+import { visualizer } from "rollup-plugin-visualizer";
+export default defineConfig(){
+    plugins:[
+      ...
+      visualizer({
+        //注意这里要设置为true，打包时会自动打开分析页面。
+        open:true,  
+        //分析图生成的文件名
+        filename: "stats.html", 
+        //收集gzip大小并将其显示
+        gzipSize: true, // 
+        //收集 brotli 大小并将其显示
+        brotliSize: true, 
+      })
+      ...
+    ]
+}
+```
+2 运行运行命令打包，生成分析图
+
+输入`pnpm build`打包项目，等待片刻，生成分析视图，视图会自动跳出来，并保存在项目根目录下，文件名就是刚刚参数filename的名字（stats.html）
+
+![](https://cdn.staticaly.com/gh/AnyFork/blog-images/main/markdown/202307211635849.png)
+
+视图分析中方块越大，表示该文件占用的空间越大，对于网络带宽和访问速度的要求就越高。如果一个网站中包含大量的大文件，那么用户在访问该网站时需要下载更多的数据，这会导致网站加载速度变慢，用户体验变差。
+
+#### 8 vite-plugin-compression
+>vite-plugin-compression 官网：https://github.com/vbenjs/vite-plugin-compression
+
+`gzip`压缩：当前端资源过大时，服务器请求资源会比较慢。前端可以将资源通过`Gzip`压缩使文件体积减少大概60%左右，压缩后的文件，通过后端简单处理，浏览器可以将其正常解析出来。如果浏览器的请求头中包含`content-encoding: gzip`，即证明浏览器支持该属性。
+
+`vite`中使用`vite-plugin-compression`插件可以很便捷的对代码进行`gzip`压缩，减少代码体积，加快浏览器访问速度。压缩的代码放到服务器后，需要后端配置一些东西，浏览器才可以解析。比如可以配置nginx.
+
+##### 8.1 依赖安装
+```js
+pnpm install vite-plugin-compression -D
+```
+##### 8.2 插件配置
+在`vite.config.ts`中进行插件配置，如下：
+```ts
+// 引入vite-plugin-compression模块
+import viteCompression from 'vite-plugin-compression';
+export default defineConfig(){
+    plugins:[
+      ...
+      viteCompression()
+      ...
+    ]
+}
+```
+
+### 2 Naive-UI框架
+> naive-ui 官网地址：https://www.naiveui.com/zh-CN/os-theme/docs/installation
+
+`naive-ui`全量使用`TypeScript`编写, 无样式文件，组件按需加载，是一个使用起来非常`清爽`的`Vue 3`组件库, 组件比较完整，主题可调，完全兼容现在主流的浏览器。
+
+#### 1 安装依赖
+```js
+pnpm install naive-ui -D
+```
+#### 2 按需引入
+可以使用`unplugin-auto-import` 插件来自动导入`API`,使用`unplugin-vue-components`插件来按需自动加载组件，插件会自动解析模板中的使用到的组件，并导入组件。
+
+1 在`vite.config.ts`中进行配置，代码如下：
+```js
+import AutoImport from 'unplugin-auto-import/vite'
+import Components from 'unplugin-vue-components/vite'
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [
+    vue(),
+    AutoImport({
+      imports: [
+        'vue',
+        {
+          'naive-ui': [
+            'useDialog',
+            'useMessage',
+            'useNotification',
+            'useLoadingBar'
+          ]
+        }
+      ]
+    }),
+    Components({
+      resolvers: [NaiveUiResolver()]
+    })
+  ]
+})
+```
+2 如果你在使用`Volar`，那么可以在`tsconfig.json`中配置`compilerOptions.types`来指定全局组件类型
+```js
+// tsconfig.json
+{
+  "compilerOptions": {
+    // ...
+    "types": ["naive-ui/volar"]
+  }
+}
+```
+至此`naive-ui`按需导入成功，此时便可以使用相关组件进行开发，详情参考：[naive-ui官网](https://www.naiveui.com/zh-CN/os-theme/docs/installation)
+
+
+### 3 Unocss框架
+> Unocss 官方网站：https://unocss.dev/
+
+#### 3.1 依赖安装
+```bash
+pnpm install -D unocss
+```
+#### 3.2 依赖配置
+在`vite.config.ts`增加如下配置，相关配置参考：[unocss](https://unocss.dev/integrations/vite)
+```ts
+// vite.config.ts
+import UnoCSS from 'unocss/vite'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  plugins: [
+    ...
+    UnoCSS(),
+    ...
+  ],
+})
+```
+#### 3.2 创建uno.config.ts
+在项目根目录下面创建`uno.config.ts`,增加如下配置：
+```ts
+//uno.config.ts
+import { defineConfig, presetUno, presetAttributify } from 'unocss'
+export default defineConfig({
+    //预设配置参考：https://unocss.dev/presets
+    presets: [
+        //设置默认预设，当自定义其他预设后，默认预设需要额外添加
+        presetUno({ dark: "class" }),
+        //设置归因预设(Attributify preset)
+        presetAttributify()
+    ],
+    //设置shortcuts,只能使用预设的和自定义的规则
+    shortcuts: {
+        'wh-full': 'w-full h-full',
+        'flex-row-center': 'flex justify-center items-center',
+        'flex-row-between': 'flex justify-between items-center',
+        'flex-row-evenly': 'flex justify-evenly items-center',
+        'flex-row-warp': 'flex flex-wrap',
+        'flex-row-end': 'flex justify-end items-center',
+        'flex-col-center': 'flex flex-col justify-center items-center',
+        'flex-x-center': 'flex justify-center',
+        'flex-y-center': 'flex items-center',
+        'i-flex-center': 'inline-flex justify-center items-center',
+        'i-flex-x-center': 'inline-flex justify-center',
+        'i-flex-y-center': 'inline-flex items-center'
+    },
+    //自定义规则
+    rules: [],
+    //主题配置
+    theme: {
+        //继承boxShadow
+        boxShadow: {
+            box: '0 1px 8px 0 rgba(255, 0, 0, 0.1)',
+            item: "0 1px 8px 0 rgba(0, 0, 0, 0.1)"
+        },
+        colors: {
+            primary: 'rgb(var(--primary-color))',
+            primary_hover: 'var(--primary-color-hover)',
+            primary_pressed: 'var(--primary-color-pressed)',
+            primary_active: 'var(--primary-color-active)',
+            info: 'var(--info-color)',
+            info_hover: 'var(--info-color-hover)',
+            info_pressed: 'var(--info-color-pressed)',
+            info_active: 'var(--info-color-active)',
+            success: 'var(--success-color)',
+            success_hover: 'var(--success-color-hover)',
+            success_pressed: 'var(--success-color-pressed)',
+            success_active: 'var(--success-color-active)',
+            warning: 'var(--warning-color)',
+            warning_hover: 'var(--warning-color-hover)',
+            warning_pressed: 'var(--warning-color-pressed)',
+            warning_active: 'var(--warning-color-active)',
+            error: 'var(--error-color)',
+            error_hover: 'var(--error-color-hover)',
+            error_pressed: 'var(--error-color-pressed)',
+            error_active: 'var(--error-color-active)'
+        }
+    }
+})
+```
+上面是我项目中经常使用到的css名称
+
+#### 3.3 配置virtual:uno.css
+在`main.ts`中增加如下代码：
+```ts
+// main.ts
+import 'virtual:uno.css'
+```
+#### 3.4 VScode插件安装
+`VScode`插件市场有`Unocss`插件，安装以后鼠标放上去可以查看对应`class`的`css`属性和值信息，[点我安装插件](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
+
+## 四 代码规范
 
 ### 1 Eslint
 
-> Eslint 中文官网地址：<https://zh-hans.eslint.org/docs/latest/use/getting-started> Eslint Github地址：<https://github.com/eslint/eslint>
+> Eslint 中文官网地址：<https://zh-hans.eslint.org/docs/latest/use/getting-started>   
+> Eslint Github地址：<https://github.com/eslint/eslint>
 
 ESLint 是一个语法规则和代码风格的检查工具，可以用来保证写出语法正确、风格统一的代码。不管是多人合作还是个人项目，代码规范是很重要的。这样做不仅可以很大程度地避免基本语法错误，也保证了代码的可读性。这所谓工欲善其事，必先利其器。
 

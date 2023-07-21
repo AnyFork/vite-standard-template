@@ -18,8 +18,14 @@
         "strict": true,
         "noUnusedLocals": true,
         "noUnusedParameters": true,
-        "noFallthroughCasesInSwitch": true
+        "noFallthroughCasesInSwitch": true,
+        "types": ["naive-ui/volar", "node"],
+        "baseUrl": "./",
+        "paths": {
+            "@": ["src"],
+            "@/*": ["src/*"]
+        }
     },
-    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", ".eslintrc.cjs", "vite.config.ts", "commitlint.config.cjs"],
+    "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue", ".eslintrc.cjs", "vite.config.ts", "commitlint.config.cjs", "uno.config.ts"],
     "references": [{ "path": "./tsconfig.node.json" }]
 }
