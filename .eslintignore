@@ -7,3 +7,4 @@ node_modules
 dist
 public
 .husky
+index.html

@@ -37,6 +37,10 @@ module.exports = {
         // 关闭ts声明的方法之前的空格校验
         '@typescript-eslint/space-before-function-paren': 'off',
         // 关闭ts类型单行和多行结尾分隔符
-        '@typescript-eslint/member-delimiter-style': 'off'
+        '@typescript-eslint/member-delimiter-style': 'off',
+        // 关闭组件以单个单次命名限制
+        'vue/multi-word-component-names': 'off',
+        // 关闭强制布尔表达式
+        '@typescript-eslint/strict-boolean-expressions': 'off'
     }
 }
