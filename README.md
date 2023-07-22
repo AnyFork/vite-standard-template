@@ -2,10 +2,10 @@
   <img width="144px" src="/public/logo.svg" />
 </p>
 <h1 align="center">vite-standard-template</h1>
-<p align="center">一款简洁，符合通用标准的,基于Vite构建的Vue3项目模板</p>
+<p align="center">一款简洁，符合通用标准的，基于Vite构建的Vue3项目模板</p>
 <p align="center">
   <a href="https://npmjs.com/package/vite"><img src="/public/version/vite.svg" alt="vite version"></a>
-    <a href="https://npmjs.com/package/vue"><img src="/public/version/vue.svg" alt="vite version"></a>
+    <a href="https://npmjs.com/package/vue"><img src="/public/version/vue.svg" alt="vue version"></a>
   <a href="https://nodejs.org/en/about/releases/"><img src="/public/version/node.svg" alt="node compatibility"></a>
 </p>
 
@@ -38,15 +38,15 @@ pnpm install
 pnpm dev
 ```
 
-## 三 核心依赖
-
+## 三 设置依赖
+项目创建完后，我们开始增加一些日常开发过程中经常使用的`vite`插件和项目工具包，方便我们能够快速开发项目。
 ### 1 Vite插件
 #### 1 unplugin-auto-import
-> unplugin-auto-import官网：https://github.com/antfu/unplugin-auto-import
+> 官网：https://github.com/antfu/unplugin-auto-import
 
 `unplugin-auto-import`是为 `Vite、Webpack、Rollup` 和 `esbuild` 按需自动导入`API`。例如：`ref,reactive`等API无需额外导入，就可以全局使用。
 ##### 1.1 依赖安装
-```js
+```shell
 pnpm install unplugin-auto-import -D
 ```
 
@@ -59,30 +59,23 @@ export default defineConfig(){
        //自动导入Composition API,https://github.com/antfu/unplugin-auto-import
       AutoImport({
         dts: "src/types/auto-import.d.ts",
-        dirs: ['src/store/modules'],
         imports: [
-          "vue",
-          "vue-router",
-          "pinia",
-          "@vueuse/core",
-          {
-            "naive-ui": ["useDialog", "useMessage", "useNotification", "useLoadingBar"],
-          },
+          "vue"
         ],
       }),
       ...
     ]
 }
 ```
-上面已经配置了`vue,vue-router,pinia,@vueuse/core,naive-ui`等相关框架自动导入API
+上面已经配置了`vue`框架自动导入API
 
 #### 2 unplugin-vue-components
->unplugin-vue-components 官网：https://github.com/antfu/unplugin-vue-components
+>官网：https://github.com/antfu/unplugin-vue-components
 
 `unplugin-vue-components`是一款组件自动导入`Vite`插件，可以自定义需要自动导入的组件目录，无需使用时手动导入。
 
 ##### 2.1 依赖安装
-```js
+```shell
 pnpm install unplugin-vue-components -D
 ```
 ##### 2.2 插件配置
@@ -93,24 +86,21 @@ export default defineConfig(){
       ...
         //自动导入组件，https://github.com/antfu/unplugin-vue-components
         Components({
-        dts: "src/types/components.d.ts",
-        dirs: ['src/components'],
-        resolvers: [
-            NaiveUiResolver()
-            })],
+          dts: "src/types/components.d.ts",
+          dirs: ['src/components'],
+          resolvers: [],
         }),
       ...
     ]
 }
 ```
-
 #### 3 unplugin-vue-setup-extend-plus
-> unplugin-vue-setup-extend-plus 官网：https://github.com/chenxch/unplugin-vue-setup-extend-plus
+> 官网：https://github.com/chenxch/unplugin-vue-setup-extend-plus
 
 `Vue3`组件自定义命名插件，可以在`<script setup lang=ts name="Good"></script>`标签中，通过设置name属性为组件命名
 
 ##### 3.1 依赖安装
-```js
+```shell
 pnpm install unplugin-vue-setup-extend-plus -D
 ```
 ##### 3.2 插件配置
@@ -128,13 +118,18 @@ export default defineConfig(){
     ]
 }
 ```
+配置完毕后，我们可以为组件进行命名。例如:`SvgIcon`组件：
+```vue
+<script setup lang="ts" name="SvgIcon">
+</script>
+```
 #### 4 vite-plugin-html
-> vite-plugin-html 官网地址：https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
+> 官网地址：https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
 
 `vite-plugin-html`插件可以在`html`页面中使用`ejs`语法，动态注入数据。
 
 ##### 4.1 依赖安装
-```js
+```shell
 pnpm install vite-plugin-html -D
 ```
 ##### 4.2 插件配置
@@ -163,8 +158,8 @@ export default defineConfig(){
 }
 ```
 `inject`中的data就是要注入的变量参数，`env`为环境变量参数。可以通过一下代码获取到：
-```js
- const env = loadEnv(mode, process.cwd())
+```ts
+const env = loadEnv(mode, process.cwd())
 const { VITE_ICON_PREFFIX, VITE_ICON_LOCAL_PREFFIX } = env
 ```
 2 修改`index.html`文件，将`vite-plugin-html`插件注入的数据，通过`ejs`语法写入`index.html`,如下:
@@ -206,77 +201,16 @@ const { VITE_ICON_PREFFIX, VITE_ICON_LOCAL_PREFFIX } = env
 
 </html>
 ```
-#### 5 unplugin-icons
-> unplugin-icons 官网地址：https://www.npmjs.com/package/unplugin-icons
+#### 5 vite-plugin-svg-icons
+> 官网:https://github.com/vbenjs/vite-plugin-svg-icons/blob/main/README.zh_CN.md
 
-`unplugin-icons`是一款功能非常强大的图标插件，插件核心是用来做`svg Icon` 按需解析并加载的，同时它基于 `iconify`图标库支持按需访问上万种图标。支持在线按需访问加载，也能自定义本地`svg`。唯一的确定就是无法通过`icon`名称动态加载图标。
+`vite-plugin-svg-icons`是一款用于生成`svg` 雪碧图的插件，能够将本地指定文件目录下的`Svg`生成一张雪碧图，在项目运行时就生成所有图标,只需操作一次`dom`,内置缓存,仅当文件被修改时才会重新生成。通过`Svg`名称便可以加载对应的`Svg`图标。
 
 ##### 5.1 依赖安装
-```js
-pnpm install unplugin-icons -D
-```
-##### 5.2 插件配置
-在`vite.config.ts`中进行插件配置，如下：
-```ts
-export default defineConfig(){
-    plugins:[
-      ...
-      //自动导入组件，https://github.com/antfu/unplugin-vue-components
-      Components({
-        dts: "src/types/components.d.ts",
-        dirs: ['src/components'],
-        resolvers: [
-          //icon自动导入，icon组件格式：{prefix}-{collection}-{icon}
-          IconsResolver({
-            //定义图标前缀
-            prefix: VITE_ICON_PREFFIX,
-            //定义自定义图片集合名称
-            customCollections: [VITE_ICON_LOCAL_PREFFIX]
-          })],
-      }),
-      //官网地址：https://www.npmjs.com/package/unplugin-icons
-      Icons({
-        //自动从iconify下载icon
-        autoInstall: true,
-        compiler: 'vue3',
-        //自定义本地svg集合
-        customCollections: {
-          [VITE_ICON_LOCAL_PREFFIX]: FileSystemIconLoader('src/assets/svg', svg =>
-            svg.replace(/^<svg\s/, '<svg width="1.2em" height="1.2em" ')
-          )
-        },
-        scale: 1.2,
-        defaultClass: 'inline-block'
-      }),
-      ...
-    ]
-}
-```
-在`unplugin-vue-components`配置`IconsResolver`解析器可以实现自定义图标组件自动导入，icon组件格式：{prefix}-{collection}-{icon}，VITE_ICON_PREFFIX为组件前缀环境变量，VITE_ICON_LOCAL_PREFFIX为自定义Svg组件集合名称，也是通过环境变量配置。
-
-`customCollections`允许我们自定义本地`SVG`文件加载规则,`FileSystemIconLoader`配置本地`svg`目录，插件默认`svg`目录为`@/assets/svg/`。
-
-当我们配置好上面的设置后，我们可以在`vue`页面模板中直接使用`<Icon-local-user/>`图标组件。`Icon`为环境变量`VITE_ICON_PREFFIX`设置的值，项目中设置`VITE_ICON_PREFFIX=Icon`,不设置，插件默认为`icon`,`local`为环境变量`VITE_ICON_LOCAL_PREFFIX`的值，项目中设置`VITE_ICON_LOCAL_PREFFIX=local`,不设置，需要在`customCollections`中自定义，`user`为`iconify`网站中查询到的`svg`图标名称。下面是个例子
-```vue
-<template>
- <div>
-    <!--加载本地assets/svg目录下面名字为no-permission的svg图标-->
-    <Icon-local-no-permission/>
-    <!--加载iconify网站上名称为mdi-account图标 -->
-    <Icon-mdi-account />
- </div>
-</template>
-```
-#### 6 vite-plugin-svg-icons
-> vite-plugin-svg-icons 官网:https://github.com/vbenjs/vite-plugin-svg-icons
-
-`unplugin-icons`插件功能虽然很强大，不仅能按需在线加载`iconify`网站上的`svg`图标，也能加载自定义本地目录`svg`图标，但唯一的不足就是无法通过图标名称动态渲染本地图标，所有便引入了`vite-plugin-svg-icons`插件，此插件允许使用图标名称动态渲染图标组件，但无法动态按需加载其他线上图标资源，所以这2个插件相互配置，可以完美的实现svg的动态和静态渲染加载。
-
-##### 6.1 依赖安装
-```js
+```shell
 pnpm install vite-plugin-svg-icons -D
 ```
-##### 6.2 插件配置
+##### 5.2 插件配置
 1 在`vite.config.ts`中进行插件配置，如下：
 ```ts
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
@@ -288,8 +222,10 @@ export default defineConfig(){
        //// 指定需要缓存的svg图标文件夹
        iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
        // 指定symbolId格式
-       symbolId: 'Icon-local-[dir]-[name]`,
+       symbolId: 'icon-local-[dir]-[name]`,
+       // 自定义插入位置,@default: body-last
        inject: 'body-last',
+       //自定义domId,默认：__svg__icons__dom__
        customDomId: '__SVG_ICON_LOCAL__'
       })
       ...
@@ -308,14 +244,80 @@ import 'virtual:svg-icons-register'
 ```
 `menu.icon`是路径里面的`svg`图片名称。这个是简单用法，项目中已封装成了组件`SvgIcon`,请前往自行查看。
 
+4 如果使用`Typescript`,你可以在`tsconfig.json`内添加:
+```json
+// tsconfig.json
+{
+  "compilerOptions": {
+    "types": ["vite-plugin-svg-icons/client"]
+  }
+}
+```
+#### 6 @iconify/vue
+> 官网：https://iconify.design/docs/icon-components/vue/
+
+`iconify`是功能最丰富的图标框架。可以与任何图标库一起使用的统一图标框架。开箱即用的功能包括80多个图标集和超过70,000个图标。官方为了便于使用`iconify`网站上的图标，提供了`@iconify/vue`组件，供大家使用`SVG framework`，支持在线和离线2种方式使用。离线方式需要下载对应图标集合`json`数据，然后先从本地资源中加载，如果没有找到，通过API从线上下载资源，并进行浏览器缓存。
+
+`@iconify/vue`是一个功能非常强大的组件，支持图标名称动态渲染和静态渲染，正好弥补`vite-plugin-svg-icons`功能缺陷。
+##### 6.1 依赖安装
+```shell
+pnpm install @iconify/vue -D
+```
+##### 6.2 使用例子
+```ts
+import { Icon } from '@iconify/vue';
+<Icon icon="mdi-light:home" />
+```
+##### 6.3 自定义组件
+虽然`@iconify/vue`也支持本地`svg`,但逐个配置非常麻烦，所以结合`vite-plugin-svg-icons`和`@iconify/vue`,我们创建一个自定义组件，使其不仅支持本地静态动态`Svg`渲染，还支持显示静态动态`Svg`渲染。下面是自定义组件代码：
+```vue
+<template>
+    <template v-if="localIcon">
+        <svg aria-hidden="true" width="1em" height="1em" v-bind="bindAttrs">
+            <use :xlink:href="symbolId" fill="currentColor" />
+        </svg>
+    </template>
+    <template v-else>
+        <Icon v-if="icon" :icon="icon" v-bind="bindAttrs" />
+    </template>
+</template>
+
+<script setup lang="ts" name="SvgIcon">
+import { Icon } from '@iconify/vue'
+// eslint-disable-next-line vue/no-setup-props-destructure
+const { icon, localIcon } = defineProps<{
+    /** iconify线上图标名称 */
+    icon?: string
+    /** 本地svg的文件名称 */
+    localIcon?: string
+}>()
+// 获取组件传递的属性
+const attrs = useAttrs()
+// 计算绑定属性
+const bindAttrs = computed<{ class: string; style: string }>(() => ({
+    class: (attrs.class as string) ?? 'w-24px h-24px',
+    style: attrs.style as string
+}))
+// 计算本地svg动态的symbolId
+const symbolId = computed(() => {
+    const icon = localIcon ?? 'no-icon'
+    return `#icon-local-${icon}`
+})
+</script>
+```
+此时，便可以灵活的渲染本地和线上`iconify`网站上的`Svg`图标，使用例子如下：
+```vue
+本地Svg:<SvgIcon localIcon="logo"></SvgIcon>
+iconify线上Svg:<SvgIcon icon="healthicons:fhir-logo" class="w-24px h-24px"></SvgIcon>
+```
 
 #### 7 rollup-plugin-visualizer
-> rollup-plugin-visualizer 官网：https://github.com/btd/rollup-plugin-visualizer
+> 官网：https://github.com/btd/rollup-plugin-visualizer
 
 `rollup-plugin-visualizer`是一个用于Rollup构建工具的插件，一款用于项目性能优化，打包体积分析，能够生成可视化的构建报告，帮助开发者更好地了解构建过程中的文件大小、依赖关系等信息的插件。
 
 ##### 7.1 依赖安装
-```js
+```shell
 pnpm install rollup-plugin-visualizer -D
 ```
 
@@ -351,14 +353,14 @@ export default defineConfig(){
 视图分析中方块越大，表示该文件占用的空间越大，对于网络带宽和访问速度的要求就越高。如果一个网站中包含大量的大文件，那么用户在访问该网站时需要下载更多的数据，这会导致网站加载速度变慢，用户体验变差。
 
 #### 8 vite-plugin-compression
->vite-plugin-compression 官网：https://github.com/vbenjs/vite-plugin-compression
+> 官网：https://github.com/vbenjs/vite-plugin-compression
 
 `gzip`压缩：当前端资源过大时，服务器请求资源会比较慢。前端可以将资源通过`Gzip`压缩使文件体积减少大概60%左右，压缩后的文件，通过后端简单处理，浏览器可以将其正常解析出来。如果浏览器的请求头中包含`content-encoding: gzip`，即证明浏览器支持该属性。
 
 `vite`中使用`vite-plugin-compression`插件可以很便捷的对代码进行`gzip`压缩，减少代码体积，加快浏览器访问速度。压缩的代码放到服务器后，需要后端配置一些东西，浏览器才可以解析。比如可以配置nginx.
 
 ##### 8.1 依赖安装
-```js
+```shell
 pnpm install vite-plugin-compression -D
 ```
 ##### 8.2 插件配置
@@ -374,14 +376,108 @@ export default defineConfig(){
     ]
 }
 ```
+#### 9 完整的vite.config.ts
+下面展示整个项目`vite.config.ts`完整的配置，代码如下
+```ts
+import { type ConfigEnv, defineConfig, loadEnv } from 'vite'
+import vue from '@vitejs/plugin-vue'
+// 该包是用于配置vite运行的时候自动检测eslint规范,不符合规范，启动时不会报错，页面刷新时会报错，https://github.com/gxmari007/vite-plugin-eslint
+import eslint from 'vite-plugin-eslint'
+import { visualizer } from 'rollup-plugin-visualizer'
+import ViteCompression from 'vite-plugin-compression'
+import Components from 'unplugin-vue-components/vite'
+import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
+import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
+import AutoImport from 'unplugin-auto-import/vite'
+import UnoCSS from 'unocss/vite'
+import { createHtmlPlugin } from 'vite-plugin-html'
+import path from 'path'
+
+// https://vitejs.dev/config/
+export default defineConfig(({ mode }: ConfigEnv) => {
+    const env = loadEnv(mode, process.cwd())
+    console.log(env)
+    return {
+        // 配置插件
+        plugins: [
+            vue(),
+            eslint(),
+            /** 打包分析插件，官网：https://github.com/btd/rollup-plugin-visualizer */
+            visualizer({
+                // 注意这里要设置为true，打包时会自动打开分析页面。
+                open: true,
+                // 分析图生成的文件名
+                filename: 'stats.html',
+                // 收集gzip大小并将其显示
+                gzipSize: true, //
+                // 收集 brotli 大小并将其显示
+                brotliSize: true
+            }),
+            /** 打包压缩插件 官网：https://github.com/vbenjs/vite-plugin-compression */
+            ViteCompression({ algorithm: 'gzip' }),
+            // 自动导入Composition API,https://github.com/antfu/unplugin-auto-import
+            AutoImport({
+                // dts生成路径
+                dts: 'src/types/auto-import.d.ts',
+                // 自动本地导入文件目录路径
+                dirs: ['src/store/modules'],
+                // 设置第三方自动导入的包名
+                imports: [
+                    'vue',
+                    'vue-router',
+                    'pinia',
+                    '@vueuse/core',
+                    {
+                        'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar']
+                    }
+                ]
+            }),
+            // 自动导入组件，https://github.com/antfu/unplugin-vue-components
+            Components({
+                dts: 'src/types/components.d.ts',
+                dirs: ['src/components'],
+                resolvers: [NaiveUiResolver()]
+            }),
+            // 本地svg动态加载插件 官网地址：https://github.com/vbenjs/vite-plugin-svg-icons
+            createSvgIconsPlugin({
+                iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
+                symbolId: 'icon-local-[dir]-[name]',
+                inject: 'body-last',
+                customDomId: '__SVG_ICON_LOCAL__'
+            }),
+            // 官网地址:https://unocss.dev/integrations/vite
+            UnoCSS(),
+            // 在html中创建ejs标签，官网地址：https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
+            createHtmlPlugin({
+                // 是否压缩 html
+                minify: true,
+                /**
+                 * 需要注入 index.html ejs 模版的数据
+                 */
+                inject: {
+                    data: {
+                        title: env.VITE_SYSTEM_TITLE,
+                        loading: env.VITE_SYSTEM_LOADING,
+                        description: env.VITE_SYSTEM_DESC
+                    }
+                }
+            })
+        ],
+        resolve: {
+            // 配置别名
+            alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }]
+        }
+    }
+})
+```
 
 ### 2 Naive-UI框架
-> naive-ui 官网地址：https://www.naiveui.com/zh-CN/os-theme/docs/installation
+> 官网地址：https://www.naiveui.com/zh-CN/os-theme/docs/installation
 
 `naive-ui`全量使用`TypeScript`编写, 无样式文件，组件按需加载，是一个使用起来非常`清爽`的`Vue 3`组件库, 组件比较完整，主题可调，完全兼容现在主流的浏览器。
 
 #### 1 安装依赖
-```js
+```shell
 pnpm install naive-ui -D
 ```
 #### 2 按需引入
@@ -428,20 +524,20 @@ export default defineConfig({
 至此`naive-ui`按需导入成功，此时便可以使用相关组件进行开发，详情参考：[naive-ui官网](https://www.naiveui.com/zh-CN/os-theme/docs/installation)
 
 
-### 3 Unocss框架
-> Unocss 官方网站：https://unocss.dev/
+### 3 Unocss引擎
+> 官方网站：https://unocss.dev/
 
+`UnoCSS` - 一个具有高性能且极具灵活性的即时原子化`CSS`引擎，而非一款框架，因为它并未提供核心工具类，所有功能可以通过预设和内联配置提供，目前内置的`presetUno`预设涵盖了[Tailwindcss](https://www.tailwindcss.cn/)和[Windicss](https://cn.windicss.org/)的大部分功能，熟悉上面2个原子css框架写法的人，上手很容易，`UnoCSS`的主要目标是直观性和可定制性。
 #### 3.1 依赖安装
-```bash
-pnpm install -D unocss
+```shell
+pnpm install unocss  -D
 ```
-#### 3.2 依赖配置
+#### 3.2 引擎配置
 在`vite.config.ts`增加如下配置，相关配置参考：[unocss](https://unocss.dev/integrations/vite)
 ```ts
 // vite.config.ts
 import UnoCSS from 'unocss/vite'
 import { defineConfig } from 'vite'
-
 export default defineConfig({
   plugins: [
     ...
@@ -460,7 +556,7 @@ export default defineConfig({
     presets: [
         //设置默认预设，当自定义其他预设后，默认预设需要额外添加
         presetUno({ dark: "class" }),
-        //设置归因预设(Attributify preset)
+        //设置归因预设(Attributify preset),可以使用bg=red等语法
         presetAttributify()
     ],
     //设置shortcuts,只能使用预设的和自定义的规则
@@ -512,7 +608,7 @@ export default defineConfig({
     }
 })
 ```
-上面是我项目中经常使用到的css名称
+上面是我项目中经常使用到的配置。
 
 #### 3.3 配置virtual:uno.css
 在`main.ts`中增加如下代码：
@@ -523,8 +619,453 @@ import 'virtual:uno.css'
 #### 3.4 VScode插件安装
 `VScode`插件市场有`Unocss`插件，安装以后鼠标放上去可以查看对应`class`的`css`属性和值信息，[点我安装插件](https://marketplace.visualstudio.com/items?itemName=antfu.unocss)
 
-## 四 代码规范
+### 4 Pinia状态管理
+> 官网：https://pinia.vuejs.org/
 
+`Pinia`是`Vue`的存储库，它允许您跨组件/页面共享状态，与`vuex`功能类似，不仅兼容`Option API`写法也兼容`Composition API`写法，同时也只是插件扩展。
+
+#### 4.1 依赖安装
+```shell
+pnpm install pinia
+```
+#### 4.2 配置Pinia实例
+1、在`vite.config.ts`文件的`AutoImport`自动导入插件中，增加`pinia`API自动导入。
+```ts
+export default defineConfig(({ mode }: ConfigEnv) => {
+  return {
+    plugins: [
+      ...
+      //自动导入Composition API,https://github.com/antfu/unplugin-auto-import
+      AutoImport({
+        dts: "src/types/auto-import.d.ts",
+        imports: [
+          ...
+          + "pinia",
+          ...
+        ],
+      })
+      ...
+    ]
+  }
+})
+```
+配置了`pinia`API自动导入后，`defineStore`和`createPinia`无需导入，便可以直接使用。
+
+2 在项目`src`目录下创建`store`目录，创建`index.ts`文件，配置`pinia`实例。
+```ts
+//src/store/index.ts
+import type { App } from 'vue';
+/**
+ * 安装vue状态管理插件pinia
+ * @param app 
+ */
+export function setupStore(app: App) {
+    const pinia = createPinia();
+    //挂载pinia实例到app
+    app.use(pinia);
+}
+```
+3 在`main.ts`中注册`pinia`实例插件。
+```ts
+//main.ts
+import { createApp } from 'vue'
+import './style.css'
+import 'virtual:uno.css'
++ import { setupStore } from './store';
+import App from './App.vue'
+const setupApp = async () => {
+    //创建vue实例
+    const app = createApp(App)
+    //创建pinia
+    + setupStore(app);
+    //挂载app
+    app.mount('#app');
+}
+setupApp()
+```
+到此为止，`pinia`实例创建好了，并挂载在了`vue`实例上。
+
+4 创建`src/store/modules`目录，将状态管理文件按照模块放在`src/store/modules`目录中。建议使用`Composition API`写法进行开发。下面是个简单例子:
+```ts
+//src/store/modules/demo.ts
+export const useCounterStore = defineStore('counter', () => {
+    const count = ref(0)
+    const increment = (): void => {
+        count.value++
+    }
+    return { count, increment }
+})
+```
+请注意，`store`是一个用`reactive`包裹的对象，这意味着不需要在`getter`之后写`.value`，但是，就像`setup` 中的`props` 一样，我们不能对其进行解构：
+```ts
+export default defineComponent({
+  setup() {
+    const store = useStore()
+    // ❌ 这不起作用，因为它会破坏响应式
+    // 这和从 props 解构是一样的
+    const { name, doubleCount } = store
+
+    name // "eduardo"
+    doubleCount // 2
+
+    return {
+      // 一直会是 "eduardo"
+      name,
+      // 一直会是 2
+      doubleCount,
+      // 这将是响应式的
+      doubleValue: computed(() => store.doubleCount),
+      }
+  },
+})
+```
+为了从`Store`中提取属性同时保持其响应式，您需要使用`storeToRefs()`。 它将为任何响应式属性创建 `refs`。 当您仅使用`store`中的状态但不调用任何操作时，这很有用：
+```ts
+import { storeToRefs } from 'pinia'
+export default defineComponent({
+  setup() {
+    const store = useStore()
+    // `name` 和 `doubleCount` 是响应式引用
+    // 这也会为插件添加的属性创建引用
+    // 但跳过任何 action 或 非响应式（不是 ref/reactive）的属性
+    const { name, doubleCount } = storeToRefs(store)
+
+    return {
+      name,
+      doubleCount
+    }
+  },
+})
+```
+
+5 将模块目录`modules`下面的文导出到`src/store/modules/index.ts`文件中，这样我们以后使用的时候，可以直接从`@/store/modules`直接导入
+```ts
+//src/store/modules/index.ts
+export * from './demo'
+//src/store/index.ts
+export * from './modules'
+```
+5 在需要调用的文件中，通过命令导入`import { useCounterStore } from '@/store/modules'`,使用方法如下：
+```ts
+import { useCounterStore } from '@/store/modules'
+const counter = useCounterStore()
+const { count } = storeToRefs(counter)
+```
+注意，不能直接对`useCounterStore()`进行结构，会影响响应性，需要用`storeToRefs`进行包装，然后就可以在模板中使用`count`和`increment`了。
+
+6 `AutoImport`设置自动导入
+
+虽然经过上面的配置，我们可以通过`import { useCounterStore } from '@/store/modules'`在需要的文件中进行导入使用，但每次都要写就显的麻烦，可以通过功能强大的`AutoImport`插件帮我们自动导入，以后就可以直接使用`useCounterStore`,就不用导入了。
+
+在`vite.config.ts`文件的`AutoImport`自动导入插件中，增加`src/store/modules`目录API的自动导入。
+```ts
+export default defineConfig(({ mode }: ConfigEnv) => {
+  return {
+    plugins: [
+      ...
+      //自动导入Composition API,https://github.com/antfu/unplugin-auto-import
+      AutoImport({
+        dts: "src/types/auto-import.d.ts",
+        // 自动本地导入文件目录路径
+        + dirs: ['src/store/modules'],
+        imports: [
+          ...
+          "pinia",
+          ...
+        ],
+      })
+      ...
+    ]
+  }
+})
+```
+到此，便可以愉快的玩耍了:smile: 
+#### 4.3 状态持久化
+`pinia`支持插件扩展，增强自身功能。类似`vuex`一样，`pinia`也有状态持久化插件`pinia-plugin-persistedstate`,帮助`pinia`完成状态持久功能，支持`localStorage`和`sessionStorage`2种持久化方式。
+> 官网: https://prazdevs.github.io/pinia-plugin-persistedstate/guide/
+
+##### 4.3.1 依赖安装
+```shell
+pnpm install pinia-plugin-persistedstate
+```
+##### 4.3.2 插件配置
+1 在`src/store/`目录下面创建文件目录`plugins`, 将插件`pinia-plugin-persistedstate`配置代码放在`src/store/plugin/modules/persistedstate.ts`中。
+```ts
+// src/store/plugin/modules/persistedstate.ts
+// 参考地址：https://prazdevs.github.io/pinia-plugin-persistedstate/guide/
+import { createPersistedState } from 'pinia-plugin-persistedstate'
+import { encrypto, decrypto } from '@/utils'
+/**
+ * pinia 全局持久化配置，会覆盖默认配置，但也会被单个store的persist配置覆盖
+ */
+export const createPersistedStatePlugins = createPersistedState({
+    storage: sessionStorage,
+    beforeRestore: (context) => {
+        console.log(context)
+        return context
+    },
+    afterRestore: (context) => {
+        console.log(context)
+        return context
+    },
+    // 设置序列化，生产加密，开发采用默认不加密
+    serializer: {
+        serialize: import.meta.env.PROD ? encrypto : JSON.stringify,
+        deserialize: import.meta.env.PROD ? decrypto : JSON.parse
+    }
+})
+```
+`serializer`默认的序列化为`JSON.stringify`,反序列化为`JSON.parse`，开发期间为了便于观察数据，采用默认的序列化方式，生成环境采用`encrypto`和`decrypto`进行加密和解密，增加数据的安全性。更多具体配置，请查看[官方文档](https://prazdevs.github.io/pinia-plugin-persistedstate/guide/)
+
+2 将配置好的插件安装在`pinia`实例上面，配置如下：
+```ts
+import type { App } from 'vue'
++ import { createPersistedStatePlugins } from './plugins'
+/**
+ * 安装vue状态管理插件pinia
+ * @param app
+ */
+export function setupStore(app: App): void {
+    // 创建pinia实例
+    const pinia = createPinia()
+    // 挂载pinia数据持久化插件
+    + pinia.use(createPersistedStatePlugins)
+    // 挂载pinia实例到app
+    app.use(pinia)
+}
+```
+3 开启持久化设置，在`store`状态文件增加如下配置,开启持久化配置，默认不开启。以文件`src/store/modules/demo.ts`举例：
+```ts
+export const useCounterStore = defineStore(
+    'counter',
+    () => {
+        const count = ref(0)
+        const increment = (): void => {
+            count.value++
+        }
+        return { count, increment }
+    },
+    {
+       + persist: true
+    }
+)
+
+```
+到此，`pinia`状态持久化配置完毕了，持久化状态便会生效。
+
+### 5 Vue Router路由
+`Vue Router`为`vue`项目提供路由导航功能。
+> 官网：https://router.vuejs.org/zh/
+
+#### 5.1 依赖安装
+`vue3`请安装`vue-router@4`版本路由。
+```shell
+pnpm install  vue-router@4
+```
+#### 5.2 路由配置
+1 项目`src`目录下新建`router`目录，并进行基础的路由配置，具体路由模块文件根据实际开发自行增加配置。
+```ts
+// src/router/index.ts
+import type { App } from 'vue'
+import { createRouter, createWebHistory, createWebHashHistory } from 'vue-router'
+
+// 获取路由模式(history和hash)和项目baseUrl
+const { VITE_HASH_ROUTE = 'false', VITE_BASE_URL } = import.meta.env
+
+/**
+ * 定义返回模块
+ */
+export const router = createRouter({
+    history: VITE_HASH_ROUTE === 'true' ? createWebHashHistory(VITE_BASE_URL) : createWebHistory(VITE_BASE_URL),
+    routes: []
+})
+
+/**
+ * 路由安装插件，暴露方法在main.ts中进行安装
+ * @param app
+ */
+export async function setupRouter(app: App): Promise<void> {
+    app.use(router)
+    await router.isReady()
+}
+```
+2 在`main.ts`中进行路由安装
+```ts
+// main.ts
+import { createApp } from 'vue'
+import './style.css'
+import 'virtual:uno.css'
++ import { setupRouter } from './router'
+import { setupStore } from './store'
+import App from './App.vue'
+const setupApp = async (): Promise<void> => {
+    // 创建vue实例
+    const app = createApp(App)
+    // 创建pinia
+    setupStore(app)
+    // 创建vueRouter
+    + await setupRouter(app)
+    // 挂载app
+    app.mount('#app')
+}
+await setupApp()
+```
+3 在`vite.config.ts`的API自动导入插件`AutoImport`，增加以下配置：
+```ts
+ // vite.config.ts
+ ...
+ AutoImport({
+    // dts生成路径
+    dts: 'src/types/auto-import.d.ts',
+    // 自动本地导入文件目录路径
+    dirs: ['src/store/modules'],
+    // 设置第三方自动导入的包名
+    imports: [
+        'vue',
+        'pinia',
+        +'vue-router',
+        {
+            'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar']
+        }
+    ]
+}),
+...
+```
+到此，路由安装配置完毕。
+
+### 6 工具包依赖
+下面介绍项目中集成的几个工具包。
+#### 6.1 @vueuse/core
+> 官网：https://vueuse.org/
+
+`@vueuse/core`是一个强大的工具包，包含大量的`Composition API`工具，支持`vue2`和`vue3`,你想不到的工具都在这里，非常实用。
+##### 6.1.1 依赖安装
+```shell
+pnpm install @vueuse/core
+```
+##### 6.1.2 配置自动导入
+在`vite.config.ts`的API自动导入插件`AutoImport`，增加以下配置：
+```ts
+ // vite.config.ts
+ ...
+ AutoImport({
+    // dts生成路径
+    dts: 'src/types/auto-import.d.ts',
+    // 自动本地导入文件目录路径
+    dirs: ['src/store/modules'],
+    // 设置第三方自动导入的包名
+    imports: [
+        'vue',
+        'vue-router',
+        'pinia',
+        +'@vueuse/core',
+        {
+            'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar']
+        }
+    ]
+}),
+...
+```
+#### 6.2 crypto-js
+> 官网：https://github.com/brix/crypto-js
+
+`crypto-js`是一个比较古老的加解密工具，代码仓库都是十年前的，但功能还是很强大。
+
+##### 6.2.1 依赖安装
+```shell
+# 安装crypto-js 依赖
+pnpm install crypto-js
+# 安装crypto-js类型声明文件
+pnpm install @types/crypto-js -D
+```
+##### 6.2.2 简单示例
+简单的使用例子参考：`src/utils/modules/crypto/index.ts`，更加详细使用方法参考：[官网](https://github.com/brix/crypto-js)
+
+#### 6.3 lodash-es
+> 官网：https://www.lodashjs.com/
+
+`Lodash`是一个一致性、模块化、高性能的`JavaScript`实用工具库，算是从`Underscore`分离出来的超集.
+`lodash` 为了良好的浏览器兼容性，它使用了旧版`es5` 的模块语法；而`lodash-es`则使用了`es6 `的模块语法，这让`vite`之类的打包工具可以对其进行`tree shake （摇树优化）`以删除未使用的代码来优化打包体积。所以在使用`lodash`库时，推荐通过`lodash-es`来进行导入操作。`lodash-es`提供了很多实用的工具，比如：节流，防抖，深拷贝等。
+##### 6.3.1 依赖安装
+```shell
+# 安装lodash-es依赖
+pnpm install lodash-es
+# 安装lodash-es类型声明文件
+pnpm install @types/lodash-es -D
+```
+##### 6.3.2 简单示例
+1 导入方式
+```ts
+/*引入全部*/
+import _ from 'lodash-es';
+/**按需引入*/
+import { defaultsDeep } from 'lodash-es'; 
+```
+2 浅拷贝clone
+```ts
+import { clone } from 'lodash-es'; 
+const objects = [{ 'a': 1 }, { 'b': 2 }]; 
+const shallow = clone(objects);
+ // true
+console.log(shallow[0] === objects[0]); 
+```
+3 深拷贝 cloneDeep
+cloneDeep(value) 类似clone 但是它会递归拷贝 value。返回拷贝后的值。
+```ts
+import { cloneDeep } from 'lodash-es';
+const objects = [{ 'a': 1 }, { 'b': 2 }];
+const deep = cloneDeep(objects);
+//false
+console.log(deep[0] === objects[0]); 
+```
+4 防抖 debounce
+debounce(func, [wait=0], [options=]) 创建一个 debounced（防抖动）函数，该函数会从上一次被调用后，延迟 wait 毫秒后调用 func 方法。 返回新的 debounced（防抖动）函数。
+- func (Function): 要防抖动的函数。
+- [wait=0] (number): 需要延迟的毫秒数。
+- [options=] (Object): 选项对象。
+- [options.leading=false] (boolean): 指定在延迟开始前调用。
+- [options.maxWait] (number): 设置 func 允许被延迟的最大值。
+- [options.trailing=true] (boolean): 指定在延迟结束后调用。
+```ts
+import { debounce } from 'lodash-es';
+// 避免窗口在变动时出现昂贵的计算开销。
+jQuery(window).on('resize',debounce(calculateLayout, 150));
+ 
+// 当点击时 `sendMail` 随后就被调用。
+jQuery(element).on('click',debounce(sendMail, 300, {
+  'leading': true,
+  'trailing': false
+}));
+ 
+// 确保 `batchLog` 调用1次之后，1秒内会被触发。
+var debounced = debounce(batchLog, 250, { 'maxWait': 1000 });
+var source = new EventSource('/stream');
+jQuery(source).on('message', debounced);
+ 
+// 取消一个 trailing 的防抖动调用
+jQuery(window).on('popstate', debounced.cancel);
+```
+5 节流 throttle
+throttle(func, [wait=0], [options=]) 创建一个节流函数，在 wait 秒内最多执行 func 一次的函数。 返回节流的函数。
+- func (Function): 要节流的函数。
+- [wait=0] (number): 需要节流的毫秒。
+- [options=] (Object): 选项对象。
+- [options.leading=true] (boolean): 指定调用在节流开始前。
+- [options.trailing=true] (boolean): 指定调用在节流结束后。
+```ts
+// 避免在滚动时过分的更新定位
+jQuery(window).on('scroll', throttle(updatePosition, 100));
+ 
+// 点击后就调用 `renewToken`，但5分钟内超过1次。
+var throttled = throttle(renewToken, 300000, { 'trailing': false });
+jQuery(element).on('click', throttled);
+ 
+// 取消一个 trailing 的节流调用。
+jQuery(window).on('popstate', throttled.cancel);
+```
+
+## 四 代码规范
+下面开始集成项目多人协作开发过程中，代码编写规范，格式化规范以及git提交规范，统一团队开发标准，规范代码风格。
 ### 1 Eslint
 
 > Eslint 中文官网地址：<https://zh-hans.eslint.org/docs/latest/use/getting-started>   
@@ -612,7 +1153,7 @@ module.exports = {
 
 我们可以通过命令进行`Eslint`规范检测和修复。执行以下命令在`package.json`中生成检测命令。
 
-```ts
+```shell
 //eslint检测命令
 pnpm pkg set scripts.lint="eslint . --ext src/*.{js,ts,vue}"
 //eslint修复命令
@@ -623,7 +1164,7 @@ pnpm pkg set scripts.lint:fix="eslint . --ext src/*.{js,ts,vue} --fix"
 
 #### 1.4 Vite插件配置
 
-> vite-plugin-eslint官网：<https://github.com/gxmari007/vite-plugin-eslint>
+> 官网：<https://github.com/gxmari007/vite-plugin-eslint>
 
 `vite-plugin-eslint`用于配置`vite`在运行和打包的时候，自动检测`eslint`规范，如果不符合规范，在项目启动时不会报错，浏览器打开页面或者页面刷新时会报`eslint`检测错误。
 
@@ -774,7 +1315,7 @@ public
 
 ### 2 Perttier
 
-> Perttier逛网：<https://www.prettier.cn/>
+> 官网：<https://www.prettier.cn/>
 
 `Perttier`是一个功能强大的代码格式化工具，支持多种格式的文件类型，还能保存就格式化,支持需要编程语言。`VScode`提供了强大的`Prettier`插件，[点我安装](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode),安装完插件，便可以愉快的玩耍了。
 
@@ -788,7 +1329,7 @@ public
 
 1 `Eslint`搭配`prettier`使用步骤,首先安装插件`eslint-config-prettier`和`eslint-plugin-prettier`
 
-```js
+```shell
 pnpm install  eslint-plugin-prettier prettier eslint-config-prettier -D
 ```
 
@@ -839,7 +1380,7 @@ module.exports = {
 
 执行下面命令，在`package.json`的scripts中生成命令，执行命令可以进行文件格式化
 
-```js
+```shell
 pnpm pkg set scripts.format='prettier --write "./**/*.{html,vue,ts,js,json,md,css}"'
 ```
 
@@ -931,33 +1472,31 @@ node_modules
 
 #### 3.1 安装依赖
 
-```js
+```shell
 pnpm install husky  -D
 ```
 
-#### <a id="commitlint">3.2 husky配置</a>
-
-1 在`package.json`中添加脚本命令,用于生成`.husky`目录
-
-```js
+#### 3.2 husky配置
+<span id="commitlint">1 在`package.json`中添加脚本命令,用于生成`.husky`目录</span>
+```shell
 pnpm pkg set scripts.prepare="husky install"
 ```
 
 2 执行命令`pnpm  prepare`，在根目录创建`.husky`文件夹,将`git hooks`钩子交由`husky`执行,每次执行`pnpm install`会生成`.husky`脚本目录，如果目录存在，不会重复生成。
 
-```js
+```shell
 pnpm  prepare
 ```
 
 3 添加`commit-msg`钩子,在执行`git commit`命令时执行信息校验。
 
-```js
+```shell
 npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
 ```
 
 4 为了便于记住命令，可以将步骤3中的命令加入到`package.json`的`scripts`中
 
-```js
+```shell
  "commit-msg": "npx husky add .husky/commit-msg \"npx --no-install commitlint --edit '$1'\""
 ```
 
@@ -969,7 +1508,7 @@ npx husky add .husky/commit-msg 'npx --no-install commitlint --edit "$1"'
 
 #### 4.1 依赖安装
 
-```js
+```shell
 pnpm install lint-staged -D
 ```
 
@@ -989,13 +1528,13 @@ pnpm install lint-staged -D
 
 2 设置`pre-commit`为运行`lint-staged`.在完成上面的配置之后，可以手动通过`npx lint-staged`, 来检查暂存区里面的文件。当然我们也可以通过`git hook`的钩子`pre-commit`来进行自动控制。执行下面命令在`husky`中进行设置：
 
-```js
+```shell
 npx husky add .husky/pre-commit "npx lint-staged"
 ```
 
 3 同时也可以将步骤2种的命令配置在`package.json`的`scripts`中：
 
-```js
+```shell
 pnpm pkg set scripts.pre-commit="npx husky add .husky/pre-commit 'npx lint-staged'"
 ```
 
@@ -1009,12 +1548,12 @@ lint-staged过滤文件采用glob模式,`git commit`时触发`pre-commit`钩子�
 
 #### 5.1 安装依赖
 
-```js
+```shell
 pnpm install @commitlint/cli @commitlint/config-conventional -D
 ```
 
--   @commitlint/cli: `commitlint`的命令行工具
--   @commitlint/config-conventional: `commitlint`校验的规则集，比较常用的`Conventional Commits`是`Angular`约定
+- @commitlint/cli: `commitlint`的命令行工具
+- @commitlint/config-conventional: `commitlint`校验的规则集，比较常用的`Conventional Commits`是`Angular`约定
 
 注意:` @commitlint/config-conventional`在后面会被移除
 
@@ -1080,7 +1619,7 @@ rule配置说明: rule由name和配置数组组成，如：‘name:[0, ‘always
 
 #### 6.1依赖安装
 
-```js
+```shell
 pnpm install commitizen cz-conventional-changelog -D
 ```
 
@@ -1088,13 +1627,13 @@ pnpm install commitizen cz-conventional-changelog -D
 
 1 在`package.json` 中添加`commit`指令, 执行`git-cz`指令
 
-```js
+```shell
 pnpm pkg set scripts.commit="git add . && git-cz"
 ```
 
 2 在项目目录里，运行下面的命令，使其支持`Vue`的`Commit message`格式，自动初始化命令行的选项信息
 
-```js
+```shell
 commitizen init cz-conventional-changelog --save --save-exact
 ```
 
@@ -1120,7 +1659,7 @@ commitizen init cz-conventional-changelog --save --save-exact
 
 #### 7.1 依赖安装
 
-```js
+```shell
 pnpm install  cz-customizable commitlint-config-cz --D
 ```
 
@@ -1228,7 +1767,7 @@ module.exports = {
 
 1 `git-commit-emoji`是一款支持在`commit-message`中输入`emoji`的插件，丰富提交信息
 
-```js
+```shell
 pnpm install commitlint-config-git-commit-emoji -D
 ```
 
@@ -1242,7 +1781,7 @@ module.exports = {
 
 最后，你可以使用以下命令来代替`git commit`:
 
-```js
+```shell
 pnpm commit
 ```
 
@@ -1254,7 +1793,7 @@ pnpm commit
 
 #### 8.1 依赖安装
 
-```js
+```shell
 pnpm install conventional-changelog conventional-changelog-cli -D
 ```
 
@@ -1262,7 +1801,7 @@ pnpm install conventional-changelog conventional-changelog-cli -D
 
 1 将`changelog`脚本添加到您的`package.json`
 
-```json
+```shell
 pnpm pkg set scripts.changelog="conventional-changelog -p cz-config.cjs -i CHANGELOG.md -s -r 0"
 ```
 
@@ -1278,7 +1817,7 @@ pnpm pkg set scripts.changelog="conventional-changelog -p cz-config.cjs -i CHANG
 
 2 运行命令生成最新`CHANGELOG`
 
-```js
+```shell
 pnpm changelog
 ```
 
@@ -1292,19 +1831,19 @@ pnpm changelog
 
 1 `git clone` 项目源码到本地
 
-```js
+```shell
 git clone https://github.com/AnyFork/vite-standard-template.git
 ```
 
 2 安装项目依赖
 
-```js
+```shell
 pnpm install
 ```
 
 3 项目运行
 
-```js
+```shell
 pnpm dev
 ```
 

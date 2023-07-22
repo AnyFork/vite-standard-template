@@ -34,6 +34,9 @@ module.exports = {
         '@typescript-eslint/indent': 'off',
         // 关闭方法之前的空格校验
         'space-before-function-paren': 'off',
-        '@typescript-eslint/space-before-function-paren': 'off'
+        // 关闭ts声明的方法之前的空格校验
+        '@typescript-eslint/space-before-function-paren': 'off',
+        // 关闭ts类型单行和多行结尾分隔符
+        '@typescript-eslint/member-delimiter-style': 'off'
     }
 }

@@ -5,7 +5,7 @@ export default defineConfig({
     presets: [
         // 设置默认预设，当自定义其他预设后，默认预设需要额外添加
         presetUno({ dark: 'class' }),
-        // 设置归因预设(Attributify preset)
+        // 设置归因预设(Attributify preset),可以使用bg=red等语法
         presetAttributify()
     ],
     // 设置shortcuts,只能使用预设的和自定义的规则

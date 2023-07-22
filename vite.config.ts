@@ -4,22 +4,20 @@ import vue from '@vitejs/plugin-vue'
 import eslint from 'vite-plugin-eslint'
 import { visualizer } from 'rollup-plugin-visualizer'
 import ViteCompression from 'vite-plugin-compression'
-import Icons from 'unplugin-icons/vite'
-import IconsResolver from 'unplugin-icons/resolver'
 import Components from 'unplugin-vue-components/vite'
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers'
-import { FileSystemIconLoader } from 'unplugin-icons/loaders'
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons'
 import AutoImport from 'unplugin-auto-import/vite'
 import UnoCSS from 'unocss/vite'
+import { createHtmlPlugin } from 'vite-plugin-html'
 import path from 'path'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
     const env = loadEnv(mode, process.cwd())
-    const { VITE_ICON_PREFIX, VITE_ICON_LOCAL_PREFIX, VITE_COMPRESS_ALGORITHM = 'gzip' } = env
-    const collectionName = VITE_ICON_LOCAL_PREFIX.replace(`${VITE_ICON_PREFIX}-`, '')
+    console.log(env)
     return {
+        // 配置插件
         plugins: [
             vue(),
             eslint(),
@@ -35,7 +33,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 brotliSize: true
             }),
             /** 打包压缩插件 官网：https://github.com/vbenjs/vite-plugin-compression */
-            ViteCompression({ algorithm: VITE_COMPRESS_ALGORITHM }),
+            ViteCompression({ algorithm: 'gzip' }),
             // 自动导入Composition API,https://github.com/antfu/unplugin-auto-import
             AutoImport({
                 // dts生成路径
@@ -57,38 +55,36 @@ export default defineConfig(({ mode }: ConfigEnv) => {
             Components({
                 dts: 'src/types/components.d.ts',
                 dirs: ['src/components'],
-                resolvers: [
-                    NaiveUiResolver(),
-                    // icon自动导入，icon组件格式：{prefix}-{collection}-{icon}
-                    IconsResolver({
-                        // 定义图标前缀
-                        prefix: VITE_ICON_PREFIX,
-                        // 定义自定义图片集合名称
-                        customCollections: [VITE_ICON_LOCAL_PREFIX]
-                    })
-                ]
-            }),
-            // 官网地址：https://www.npmjs.com/package/unplugin-icons
-            Icons({
-                // 自动从iconify下载icon
-                autoInstall: true,
-                compiler: 'vue3',
-                // 自定义本地svg集合
-                customCollections: {
-                    [collectionName]: FileSystemIconLoader('src/assets/svg', (svg) => svg.replace(/^<svg\s/, '<svg width="1.2em" height="1.2em" '))
-                },
-                scale: 1.2,
-                defaultClass: 'inline-block'
+                resolvers: [NaiveUiResolver()]
             }),
             // 本地svg动态加载插件 官网地址：https://github.com/vbenjs/vite-plugin-svg-icons
             createSvgIconsPlugin({
                 iconDirs: [path.resolve(process.cwd(), 'src/assets/svg')],
-                symbolId: `${collectionName}-[dir]-[name]`,
+                symbolId: 'icon-local-[dir]-[name]',
                 inject: 'body-last',
                 customDomId: '__SVG_ICON_LOCAL__'
             }),
             // 官网地址:https://unocss.dev/integrations/vite
-            UnoCSS()
-        ]
+            UnoCSS(),
+            // 在html中创建ejs标签，官网地址：https://github.com/vbenjs/vite-plugin-html/blob/main/README.zh_CN.md
+            createHtmlPlugin({
+                // 是否压缩 html
+                minify: true,
+                /**
+                 * 需要注入 index.html ejs 模版的数据
+                 */
+                inject: {
+                    data: {
+                        title: env.VITE_SYSTEM_TITLE,
+                        loading: env.VITE_SYSTEM_LOADING,
+                        description: env.VITE_SYSTEM_DESC
+                    }
+                }
+            })
+        ],
+        resolve: {
+            // 配置别名
+            alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }]
+        }
     }
 })
