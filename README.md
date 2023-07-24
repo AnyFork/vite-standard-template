@@ -16,7 +16,7 @@
 一直以来，每次采用`vite`搭建`Vue3`项目时，都苦于配置`Eslint`代码校验规范，网上的水贴层出不穷，你抄我的，我粘贴你的，没有几个是有用的，不仅容易误导他人，还浪费大量的时间排查问题。最近花了一些时间，查阅了很多资料，自己也通过反复验证，决定自己搭建一个简单的模板，集成好日常代码开发规范和提交规范，把常用
 的`Vite`插件都配置好，在以后创建项目时直接使用，避免重复造轮子，同时也供他人参考。
 
-这是一个基于Vite4.X + Vue3.X + TypeScript + Naive UI + Pinina + VueRouter + Unocss + Alova + Eslint + Prettier + husky + lint-staged + commitlint + commitizen + cz-customizable+ conventional-changelog构建的标准的vue项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含组件自动导入API
+这是一个基于Vite4.X + Vue3.X + TypeScript + Naive UI + Pinia + VueRouter + Unocss + Alova + Eslint + Prettier + husky + lint-staged + commitlint + commitizen + cz-customizable+ conventional-changelog构建的标准的vue项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含组件自动导入API
 
 ## 二 项目创建
 
