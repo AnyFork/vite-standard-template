@@ -1,8 +1,13 @@
+* {
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
 body {
     margin: 0;
     display: flex;
     place-items: center;
-    min-width: 320px;
     min-height: 100vh;
 }
 

@@ -7,8 +7,9 @@ import { setupStore } from './store'
 import App from './App.vue'
 import loading from './components/common/AppLoading.vue'
 const setupApp = async (): Promise<void> => {
-    // loading
+    // 系统loading组件
     const appLoading = createApp(loading)
+    // 挂载系统loading组件
     appLoading.mount('#loading')
     // 创建vue实例
     const app = createApp(App)

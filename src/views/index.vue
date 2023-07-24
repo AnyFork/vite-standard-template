@@ -13,7 +13,7 @@
             <n-text>下面是通过SVG名称，动态加载本地和iconify线上SVG的例子</n-text>
             <n-p class="flex-row-center h-30px gap-10px">
                 <n-text>本地Svg</n-text>
-                <SvgIcon localIcon="logo" class="w-24px h-24px"></SvgIcon>
+                <SvgIcon localIcon="logo-brand" class="w-24px h-24px"></SvgIcon>
             </n-p>
             <n-p class="flex-row-center h-30px gap-5px">
                 <n-text>Iconify</n-text>

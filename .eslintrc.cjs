@@ -41,6 +41,8 @@ module.exports = {
         // 关闭组件以单个单次命名限制
         'vue/multi-word-component-names': 'off',
         // 关闭强制布尔表达式
-        '@typescript-eslint/strict-boolean-expressions': 'off'
+        '@typescript-eslint/strict-boolean-expressions': 'off',
+        // 关闭一致性类型导入规则
+        '@typescript-eslint/consistent-type-imports': 'off'
     }
 }

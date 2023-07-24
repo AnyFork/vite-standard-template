@@ -76,8 +76,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 inject: {
                     data: {
                         title: env.VITE_SYSTEM_TITLE,
-                        loading: env.VITE_SYSTEM_LOADING,
-                        description: env.VITE_SYSTEM_DESC
+                        description: env.VITE_SYSTEM_DESC,
+                        keywords: env.VITE_SYSTEM_KEYWORDS
                     }
                 }
             })
