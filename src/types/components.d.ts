@@ -17,6 +17,7 @@ declare module 'vue' {
         NMessageProvider: typeof import('naive-ui')['NMessageProvider']
         NNotificationProvider: typeof import('naive-ui')['NNotificationProvider']
         NP: typeof import('naive-ui')['NP']
+        NSpin: typeof import('naive-ui')['NSpin']
         NText: typeof import('naive-ui')['NText']
         RouterLink: typeof import('vue-router')['RouterLink']
         RouterView: typeof import('vue-router')['RouterView']

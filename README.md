@@ -16,7 +16,7 @@
 一直以来，每次采用`vite`搭建`Vue3`项目时，都苦于配置`Eslint`代码校验规范，网上的水贴层出不穷，你抄我的，我粘贴你的，没有几个是有用的，不仅容易误导他人，还浪费大量的时间排查问题。最近花了一些时间，查阅了很多资料，自己也通过反复验证，决定自己搭建一个简单的模板，集成好日常代码开发规范和提交规范，把常用
 的`Vite`插件都配置好，在以后创建项目时直接使用，避免重复造轮子，同时也供他人参考。
 
-这是一个基于Vite4.X+Vue3.X+TypeScript+Naive UI+Pinina+VueRouter+Unocss+Eslint+Prettier+husky+lint-staged+commitlint+commitizen+cz-customizable+conventional-changelog构建的标准的vue项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含组件自动导入API
+这是一个基于Vite4.X + Vue3.X + TypeScript + Naive UI + Pinina + VueRouter + Unocss + Alova + Eslint + Prettier + husky + lint-staged + commitlint + commitizen + cz-customizable+ conventional-changelog构建的标准的vue项目模板。整个项目包依赖采用`pnpm`进行依赖管理，`Node`版本为16.17.0, 同时也集成了项目中常用的插件，包含组件自动导入API
 
 ## 二 项目创建
 
@@ -359,6 +359,7 @@ export default defineConfig(){
 #### 9 完整的vite.config.ts
 下面展示整个项目`vite.config.ts`完整的配置，代码如下
 ```ts
+//vite.config.ts
 import { type ConfigEnv, defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 // 该包是用于配置vite运行的时候自动检测eslint规范,不符合规范，启动时不会报错，页面刷新时会报错，https://github.com/gxmari007/vite-plugin-eslint
@@ -376,7 +377,6 @@ import path from 'path'
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
     const env = loadEnv(mode, process.cwd())
-    console.log(env)
     return {
         // 配置插件
         plugins: [
@@ -408,7 +408,9 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                     'pinia',
                     '@vueuse/core',
                     {
-                        'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar']
+                        'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'],
+                        alova: ['useRequest', 'createAlova'],
+                        '@/service/alova': ['alova']
                     }
                 ]
             }),
@@ -437,8 +439,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                 inject: {
                     data: {
                         title: env.VITE_SYSTEM_TITLE,
-                        loading: env.VITE_SYSTEM_LOADING,
-                        description: env.VITE_SYSTEM_DESC
+                        description: env.VITE_SYSTEM_DESC,
+                        keywords: env.VITE_SYSTEM_KEYWORDS
                     }
                 }
             })
@@ -446,6 +448,28 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         resolve: {
             // 配置别名
             alias: [{ find: '@', replacement: path.resolve(__dirname, 'src') }]
+        },
+        // 本地运行配置，及跨域反向代理配置
+        server: {
+            // 服务器端口
+            port: 9527,
+            // 默认启用并允许任何源
+            cors: true,
+            // 在服务器启动时自动在浏览器中打开应用程序
+            open: true,
+            // 反向代理配置，注意rewrite写法，开始没看文档在这里踩了坑
+            proxy: {
+                // 本地开发环境通过代理实现跨域，生产环境使用nginx转发
+                '/api': {
+                    // 通过代理接口访问实际地址。这里是实际访问的地址。vue会通过代理服务器来代理请求
+                    target: env.VITE_BASIC_API_URL,
+                    changeOrigin: true,
+                    // 允许websocket代理
+                    ws: true,
+                    // 将api替换为空
+                    rewrite: (path) => path.replace(/^\/api/, '/api')
+                }
+            }
         }
     }
 })
@@ -913,17 +937,85 @@ await setupApp()
 ```
 到此，路由安装配置完毕。
 
-### 6 工具包依赖
+### 6 Alova数据请求
+> 官网：https://alova.js.org/zh-CN/get-started/overview
+
+`alova`是一个量级的请求策略库，它针对不同请求场景分别提供了具有针对性的请求策略，来提升应用可用性、流畅性，降低服务端压力，让应用如智者一般具备卓越的策略思维。alova 核心模块提供了各类适配器接口、中间件机制来保证高扩展能力，从而实现更多的请求场景。
+
+#### 6.1 依赖安装
+```shell
+pnpm install alova
+```
+#### 6.2 依赖配置
+在项目根目录创建`service/alova/index.ts`文件，代码配置如下：
+```ts
+import GlobalFetch from 'alova/GlobalFetch'
+import VueHook from 'alova/vue'
+
+// 1. 创建alova实例
+export const alova = createAlova({
+    /** base地址 */
+    baseURL: '',
+    /** 请求超时时间 */
+    timeout: 10000,
+    // VueHook用于创建ref状态，包括请求状态loading、响应数据data、请求错误对象error等
+    statesHook: VueHook,
+    // 请求适配器，推荐使用fetch请求适配器
+    requestAdapter: GlobalFetch(),
+    /** 全局的请求前置钩子 */
+    beforeRequest: (config) => {
+        console.log(config)
+    },
+    // 全局的响应拦截器
+    responded: async (response) => {
+        console.log(response)
+        return await response.json()
+    }
+})
+```
+#### 6.3 自动导入配置
+在`vite.config.ts`的`AutoImport`增加如下配置：
+```ts
+//vite.config.ts
+...
+AutoImport({
+    // dts生成路径
+    dts: 'src/types/auto-import.d.ts',
+    // 自动本地导入文件目录路径
+    dirs: ['src/store/modules'],
+    // 设置第三方自动导入的包名
+    imports: [
+        'vue',
+        'vue-router',
+        'pinia',
+        '@vueuse/core',
+        {
+            'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'],
+            + alova: ['useRequest', 'createAlova'],
+            +'@/service/alova': ['alova']
+        }
+    ]
+}),
+...
+```
+#### 6.4 使用例子
+```ts
+const { loading, data, send: sendRequest } = useRequest(alova.Get('/api/weather/city/101030100'), { immediate: false })
+const handlerEvent = async (): Promise<void> => {
+    await sendRequest()
+}
+```
+### 7 工具包依赖
 下面介绍项目中集成的几个工具包。
-#### 6.1 @vueuse/core
+#### 7.1 @vueuse/core
 > 官网：https://vueuse.org/
 
 `@vueuse/core`是一个强大的工具包，包含大量的`Composition API`工具，支持`vue2`和`vue3`,你想不到的工具都在这里，非常实用。
-##### 6.1.1 依赖安装
+##### 7.1.1 依赖安装
 ```shell
 pnpm install @vueuse/core
 ```
-##### 6.1.2 配置自动导入
+##### 7.1.2 配置自动导入
 在`vite.config.ts`的API自动导入插件`AutoImport`，增加以下配置：
 ```ts
  // vite.config.ts
@@ -946,34 +1038,34 @@ pnpm install @vueuse/core
 }),
 ...
 ```
-#### 6.2 crypto-js
+#### 7.2 crypto-js
 > 官网：https://github.com/brix/crypto-js
 
 `crypto-js`是一个比较古老的加解密工具，代码仓库都是十年前的，但功能还是很强大。
 
-##### 6.2.1 依赖安装
+##### 7.2.1 依赖安装
 ```shell
 # 安装crypto-js 依赖
 pnpm install crypto-js
 # 安装crypto-js类型声明文件
 pnpm install @types/crypto-js -D
 ```
-##### 6.2.2 简单示例
+##### 7.2.2 简单示例
 简单的使用例子参考：`src/utils/modules/crypto/index.ts`，更加详细使用方法参考：[官网](https://github.com/brix/crypto-js)
 
-#### 6.3 lodash-es
+#### 7.3 lodash-es
 > 官网：https://www.lodashjs.com/
 
 `Lodash`是一个一致性、模块化、高性能的`JavaScript`实用工具库，算是从`Underscore`分离出来的超集.
 `lodash` 为了良好的浏览器兼容性，它使用了旧版`es5` 的模块语法；而`lodash-es`则使用了`es6 `的模块语法，这让`vite`之类的打包工具可以对其进行`tree shake （摇树优化）`以删除未使用的代码来优化打包体积。所以在使用`lodash`库时，推荐通过`lodash-es`来进行导入操作。`lodash-es`提供了很多实用的工具，比如：节流，防抖，深拷贝等。
-##### 6.3.1 依赖安装
+##### 7.3.1 依赖安装
 ```shell
 # 安装lodash-es依赖
 pnpm install lodash-es
 # 安装lodash-es类型声明文件
 pnpm install @types/lodash-es -D
 ```
-##### 6.3.2 简单示例
+##### 7.3.2 简单示例
 1 导入方式
 ```ts
 /*引入全部*/

@@ -7,6 +7,7 @@ export {}
 declare global {
     const EffectScope: typeof import('vue')['EffectScope']
     const acceptHMRUpdate: typeof import('pinia')['acceptHMRUpdate']
+    const alova: typeof import('@/service/alova')['alova']
     const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
     const autoResetRef: typeof import('@vueuse/core')['autoResetRef']
     const computed: typeof import('vue')['computed']
@@ -16,6 +17,7 @@ declare global {
     const computedWithControl: typeof import('@vueuse/core')['computedWithControl']
     const controlledComputed: typeof import('@vueuse/core')['controlledComputed']
     const controlledRef: typeof import('@vueuse/core')['controlledRef']
+    const createAlova: typeof import('alova')['createAlova']
     const createApp: typeof import('vue')['createApp']
     const createEventHook: typeof import('@vueuse/core')['createEventHook']
     const createGlobalState: typeof import('@vueuse/core')['createGlobalState']
@@ -230,6 +232,7 @@ declare global {
     const usePrevious: typeof import('@vueuse/core')['usePrevious']
     const useRafFn: typeof import('@vueuse/core')['useRafFn']
     const useRefHistory: typeof import('@vueuse/core')['useRefHistory']
+    const useRequest: typeof import('alova')['useRequest']
     const useResizeObserver: typeof import('@vueuse/core')['useResizeObserver']
     const useRoute: typeof import('vue-router')['useRoute']
     const useRouter: typeof import('vue-router')['useRouter']
