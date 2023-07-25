@@ -54,7 +54,6 @@
     },
     "devDependencies": {
         "@commitlint/cli": "^17.6.7",
-        "@iconify-json/mdi": "^1.1.53",
         "@iconify/vue": "^4.1.1",
         "@types/crypto-js": "^4.1.1",
         "@types/lodash-es": "^4.17.8",

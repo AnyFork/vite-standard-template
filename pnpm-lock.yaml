@@ -34,9 +34,6 @@ devDependencies:
   '@commitlint/cli':
     specifier: ^17.6.7
     version: registry.npmmirror.com/@commitlint/cli@17.6.7
-  '@iconify-json/mdi':
-    specifier: ^1.1.53
-    version: registry.npmmirror.com/@iconify-json/mdi@1.1.53
   '@iconify/vue':
     specifier: ^4.1.1
     version: registry.npmmirror.com/@iconify/vue@4.1.1(vue@3.3.4)
@@ -789,14 +786,6 @@ packages:
     name: '@hutson/parse-repository-url'
     version: 3.0.2
     engines: {node: '>=6.9.0'}
-    dev: true
-
-  registry.npmmirror.com/@iconify-json/mdi@1.1.53:
-    resolution: {integrity: sha512-qG72Tc9Bd4w7fha+kMEySVTbH4Obgb9xA1mQl+WReFhtZ3PjcVpIWLgZGTewuIfZY8RAbd8zfAqhZ7qEYZWrhg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@iconify-json/mdi/-/mdi-1.1.53.tgz}
-    name: '@iconify-json/mdi'
-    version: 1.1.53
-    dependencies:
-      '@iconify/types': registry.npmmirror.com/@iconify/types@2.0.0
     dev: true
 
   registry.npmmirror.com/@iconify/types@2.0.0:
