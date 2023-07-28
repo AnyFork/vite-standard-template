@@ -18,7 +18,14 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     return {
         // 配置插件
         plugins: [
-            vue(),
+            vue({
+                script: {
+                    // 开启双向绑定
+                    defineModel: true,
+                    // 开启结构赋值
+                    propsDestructure: true
+                }
+            }),
             eslint(),
             /** 打包分析插件，官网：https://github.com/btd/rollup-plugin-visualizer */
             visualizer({
@@ -106,6 +113,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
                     ws: true,
                     // 将api替换为空
                     rewrite: (path) => path.replace(/^\/api/, '/api')
+                }
+            }
+        },
+        build: {
+            minify: 'terser',
+            terserOptions: {
+                compress: {
+                    // 禁用debugger
+                    drop_debugger: true,
+                    // 禁用console
+                    drop_console: true
                 }
             }
         }
